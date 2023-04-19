@@ -4,7 +4,7 @@ let getHomePage = async (req, res) => {
     try {
         let user = await db.User.findAll();
         console.log("CHECKOUT >>> user", user);
-        return res.render("homepage.ejs", { user: JSON.stringify(user) });
+        return res.render("homepage.ejs", { user: user });
     } catch (error) {
         console.log(error);
     }

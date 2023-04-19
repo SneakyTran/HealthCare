@@ -28,12 +28,20 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
+                <% for(let i=0; i < user.length; i++){%>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>
+                            <%=user[i].firstName%>
+                        </td>
+                        <td>
+                            <%=user[i].lastName%>
+                        </td>
+                        <td>
+                            <%=user[i].email%>
+                        </td>
+                    </tr>
+                    <%}%>
             </tbody>
         </table>
     </div>
