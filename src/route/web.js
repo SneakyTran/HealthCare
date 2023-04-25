@@ -11,7 +11,12 @@ let initWebRoutes = (app) => {
     router.post("/post-crud", HomeController.postCRUD);
     router.get("/get-user", HomeController.getUser);
 
-    router.get("/health-care/api/login", UserController.handleLogin);
+    //USER FUNCTION
+    router.post("/health-care/api/login", UserController.handleLogin);
+
+    //USER CRUD
+    router.get("/health-care/api/get-all-user", UserController.handleGetAllUsers);
+    
 
     return app.use("/", router);
 };

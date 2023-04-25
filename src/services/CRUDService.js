@@ -1,8 +1,6 @@
 import bcrypt from "bcryptjs";
 import db from "../models/index";
 
-const salt = bcrypt.genSaltSync(10);
-
 let createNewUser = (user) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -22,7 +20,8 @@ let createNewUser = (user) => {
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let hashPassword = await bcrypt.hashSync("B4c0//", salt);
+            const salt = bcrypt.genSaltSync(10);
+            let hashPassword = bcrypt.hashSync(password, salt);
             resolve(hashPassword);
         } catch (error) {
             reject(error);
