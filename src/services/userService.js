@@ -86,4 +86,102 @@ let getAllUsers = (userId) => {
     });
 };
 
-module.exports = { handleUserLogin, getAllUsers };
+let createNewUser = (user) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //todo check existed email
+            let check = await isExistedEmail(user.email);
+            if (check) {
+                resolve({
+                    errCode: 1,
+                    message:
+                        "Your email is already in used. Please try another email!",
+                });
+            }
+
+            let hashPw = await hashUserPassword(user.password);
+            let newUser = { ...user, password: hashPw };
+            await db.User.create(newUser);
+            resolve({
+                errCode: 0,
+                message: "OK",
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+let hashUserPassword = (password) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const salt = bcrypt.genSaltSync(10);
+            let hashPassword = bcrypt.hashSync(password, salt);
+            resolve(hashPassword);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+let deleteUser = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = {
+                errCode: 0,
+                errMessage: "",
+            };
+            let user = await db.User.findOne({
+                where: { id },
+                raw: false,
+            });
+            if (!user) {
+                result.errCode = 2;
+                result.errMessage = "Not found id: " + id;
+            } else {
+                await user.destroy();
+            }
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+let updateUser = (input) => {
+    return new Promise(async (resolve, reject) => {
+        if (!input) resolve({ errCode: 2, errMessage: "Missing parameters!" });
+        let { id } = input;
+        try {
+            let user = await db.User.findOne({ where: { id }, raw: false });
+            if (user) {
+                // user.dataValues = { ...user.dataValues, ...input };
+                user.firstName = input.firstName;
+                user.lastName = input.lastName;
+                user.phoneNumber = input.phoneNumber;
+                user.address = input.address;
+                console.log("CHECKOUT >>> updated user", user);
+                await user.save();
+            } else {
+                resolve({
+                    errCode: 1,
+                    errMessage: "User's not found",
+                });
+            }
+            resolve({
+                errCode: 0,
+                message: "Update user successfully!",
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+module.exports = {
+    handleUserLogin,
+    getAllUsers,
+    createNewUser,
+    deleteUser,
+    updateUser,
+};
